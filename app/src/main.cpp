@@ -27,24 +27,16 @@ int main(void)
 
     if (gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE) < 0) return 0;
 
-<<<<<<< HEAD
     while (1) {
 
         if(!sensor_sample_fetch(driver)) 
             return 1;
 
-<<<<<<< HEAD
-=======
-=======
-    my_sensor_set_custom_value(driver, 42);
-
-    while (1) {
+        my_sensor_set_custom_value(driver, 42);
 
         if(!sensor_sample_fetch(driver)) 
             return 1;
 
->>>>>>> eb7ae2e (Complete assignment work)
->>>>>>> cd9384b (Complete assignment work)
         k_msleep(SLEEP_TIME_MS);
 
         if(!sensor_channel_get(driver, SENSOR_CHAN_AMBIENT_TEMP, &val)) 

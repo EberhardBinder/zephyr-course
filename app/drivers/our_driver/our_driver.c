@@ -44,29 +44,13 @@ static int sensor_channel_get_my_impl(const struct device *dev,
 static DEVICE_API(sensor, api_iomico_lecture) = {
     .sample_fetch = sample_fetch_my_impl,
     .channel_get = sensor_channel_get_my_impl,
-
-
 };
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> cd9384b (Complete assignment work)
-// Init fn
-static int init(const struct device * dev) {
-    LOG_INF("Device Initialized!");
-
-    return 0;
-}
-
-DEVICE_DT_INST_DEFINE(0, init, NULL, NULL, NULL, POST_KERNEL, 80, &api_iomico_lecture);
+//DEVICE_DT_INST_DEFINE(0, init, NULL, NULL, NULL, POST_KERNEL, 80, &api_iomico_lecture);
 
 //#define DEV_INST(inst) DEVICE_DT_INST_DEFINE(inst, init, NULL, NULL, NULL, POST_KERNEL, 80, &api_iomico_lecture);
 
 //DT_INST_FOREACH_STATUS_OKAY(DEV_INST);
-<<<<<<< HEAD
-=======
-=======
 
 struct my_sensor_data {
     int custom_value;
@@ -107,5 +91,3 @@ static int our_driver_init(const struct device * dev) {
 //#define DEV_INST(inst) DEVICE_DT_INST_DEFINE(inst, init, NULL, NULL, NULL, POST_KERNEL, 80, &api_iomico_lecture);
 
 DT_INST_FOREACH_STATUS_OKAY(DEV_INST)
->>>>>>> eb7ae2e (Complete assignment work)
->>>>>>> cd9384b (Complete assignment work)
