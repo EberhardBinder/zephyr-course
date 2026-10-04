@@ -1,80 +1,88 @@
 
-menu "LED Subsystem"
+menu "LED subsystem"
 
-	menuconfig LED_SUBSYSTEM
-	bool "LED Subsystem"
-        default y
+menuconfig LED_SUBSYSTEM 
+	bool "LED_Subsystem"
+	default y
 
 	if LED_SUBSYSTEM
 
 	choice
-		prompt "LED blink system time"
-		default BLINK_SLEEP_1000MS
 
-		config BLINK_SLEEP_250MS
-		bool "Fast (250ms)"
-		config BLINK_SLEEP_1000MS
-		bool "Medium (1s)"
+	prompt "LED blink sleep time"
 
-		config BLINK_SLEEP_2000MS
-		bool "Slow (2s)"
+	default BLINK_SLEEP_1000MS
 
-	endchoice
+	config BLINK_SLEEP_250MS
+	bool "Fast (250ms)"
+
+	config BLINK_SLEEP_1000MS
+	bool "Medium (1s)"
+
+	config BLINK_SLEEP_2000MS
+	bool "Slow (2s)"
+       
+        endchoice
 
 	config BLINK_SLEEP_TIME_MS
-	int  # 
-	default 250  if BLINK_SLEEP_250MS
-	default 1000 if BLINK_SLEEP_1000MS
-	default 2000 if BLINK_SLEEP_2000MS
-	default 0
-
-	menu "Heartbeat period"
-	
-		menuconfig HEARTBEAT_PERIOD
-		bool "Heartbeat configuration"
-		default y
-		
-		config APP_HEARTBEAT_PERIOD_MS
-		int  "Heartbeat period (ms)"	
-		default 500
-		range 100 2000
-
-	endmenu
+	int  
+	default 250	if BLINK_SLEEP_250MS
+	default 1000	if BLINK_SLEEP_1000MS
+	default 2000	if BLINK_SLEEP_2000MS
+	default 1000
 
 	menu "Advanced LED settings"
 
-		menuconfig LED_ADVANCED
-		bool "Advanced LED settings"
-		default n
+	menuconfig LED_ADVANCED
+	bool "LED_ADVANCED"
+	default n
 
-		if LED_ADVANCED
+	if LED_ADVANCED
 
-		config LED_BRIGHTNESS
-		int "LED brightness (0-100)"
-		default 100
-		range 0 100
+	config LED_BRIGHTNESS
+	int "LED brightness (0-100)"
+	default 100
+	range 0 100
 
-		config LED_FADE_DURATION_MS
-		int "Fade duration (ms)"
-		default 500
+	config LED_FADE_DURATION_MS
+	int "Fade duration (ms)"
+	default 500
+	range 0 5000
 
-		endif
+	endif
 
-		menu "Expert settings"
-			visible if LED_ADVANCED
+	menu "Expert settings"
+	visible if LED_ADVANCED
+	
+	config LED_DEBUG
+	bool "Enable LED debugging"
 
-			config LED_DEBUG
-			bool "Enable LED debugging"
-
-			config CUSTOM_BLINK_PATTERN
-			bool "Custom blink pattern"
-
-		endmenu
-
+	config LED_CUSTOM_BLINK_PATTERN
+	bool "Custom blink pattern"
+	
+	endmenu
+	
 	endmenu
 
-	endif # LED_SUBSYSTEM
+endif # LED_SUBSYSTEM
 
 endmenu
 
-source "Kconfig.zephyr"
+
+menu "App heartbeat"
+
+	config APP_HEARTBEAT_PERIOD_MS
+	int "App heartbeatperiod"
+	default 500
+	range 100 2000
+
+endmenu
+
+config OUR_DRIVER
+    bool "our Driver"
+    default y
+
+source "Kconfig.zephyr"	
+
+rsource "drivers/our_driver/Kconfig"
+
