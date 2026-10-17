@@ -37,8 +37,12 @@ ZTEST_SUITE(ring_buf_init, NULL, NULL, before, NULL, NULL);
 /* PROVIDED — study this test before writing the rest. */
 ZTEST(ring_buf_init, test_fresh_state)
 {
+
 	zassert_true(rb_is_empty(), "Fresh buffer must be empty");
 	zassert_equal(rb_count(), 0, "Fresh buffer count must be 0");
+
+	ztest_test_skip();
+
 }
 
 ZTEST(ring_buf_init, test_reinit_clears_state)
@@ -47,7 +51,16 @@ ZTEST(ring_buf_init, test_reinit_clears_state)
 	 * verify the buffer is empty and count is 0.
 	 * See TEST_SPEC.md "Suite ring_buf_init" #2.
 	 */
+
+	zassert_ok(rb_push(99), "rb_push should succeed");
+
+	rb_init(4);
+
+	zassert_true(rb_is_empty(), "Fresh buffer must be empty");
+	zassert_equal(rb_count(), 0, "Fresh buffer count must be 0");
+
 	ztest_test_skip();
+
 }
 
 /*
@@ -64,7 +77,18 @@ ZTEST(ring_buf_push_pop, test_single_push_pop)
 	/* TODO(l8-task1): rb_push(42), rb_pop(&v) -> v == 42, buffer empty after.
 	 * See TEST_SPEC.md "Suite ring_buf_push_pop" #1.
 	 */
+
+	int v;
+
+	zassert_ok(rb_push(42), "rb_push should succeed");
+
+	zassert_ok(rb_pop(&v), "rb_pop should succeed");
+        zassert_equal(v, 42, "Result of rb_pop should be 42");
+
+	zassert_true(rb_is_empty(), "buffer must be empty");
+
 	ztest_test_skip();
+
 }
 
 ZTEST(ring_buf_push_pop, test_fifo_order)
@@ -73,7 +97,26 @@ ZTEST(ring_buf_push_pop, test_fifo_order)
 	 * and verify the values come out as 1, 2, 3 in that order.
 	 * See TEST_SPEC.md "Suite ring_buf_push_pop" #2.
 	 */
+
+	int v;
+
+	zassert_ok(rb_push(1), "rb_push should succeed");
+	zassert_ok(rb_push(2), "rb_push should succeed");
+	zassert_ok(rb_push(3), "rb_push should succeed");
+
+	zassert_ok(rb_pop(&v), "rb_pop should succeed");
+        zassert_equal(v, 1, "Result of rb_pop should be 1");
+
+	zassert_ok(rb_pop(&v), "rb_pop should succeed");
+        zassert_equal(v, 2, "Result of rb_pop should be 2");
+
+	zassert_ok(rb_pop(&v), "rb_pop should succeed");
+        zassert_equal(v, 3, "Result of rb_pop should be 3");
+
+	zassert_true(rb_is_empty(), "buffer must be empty");
+
 	ztest_test_skip();
+
 }
 
 ZTEST(ring_buf_push_pop, test_push_full_returns_enospc)
@@ -82,7 +125,18 @@ ZTEST(ring_buf_push_pop, test_push_full_returns_enospc)
 	 * one more value -> -ENOSPC.
 	 * See TEST_SPEC.md "Suite ring_buf_push_pop" #3.
 	 */
+
+	zassert_ok(rb_push(1), "rb_push should succeed");
+	zassert_ok(rb_push(2), "rb_push should succeed");
+	zassert_ok(rb_push(3), "rb_push should succeed");
+	zassert_ok(rb_push(4), "rb_push should succeed");
+
+        zassert_equal(rb_push(99), -ENOSPC, "Result of rb_push should be -ENOSPC");
+
+	zassert_equal(rb_count(), 4, "Buffer count must be 4");
+
 	ztest_test_skip();
+
 }
 
 /*
@@ -100,7 +154,19 @@ ZTEST(ring_buf_boundaries, test_peek_does_not_consume)
 	 * -> v == 7; rb_count() still == 1.
 	 * See TEST_SPEC.md "Suite ring_buf_boundaries" #1.
 	 */
+
+	int v;
+
+	zassert_ok(rb_push(7), "rb_push should succeed");
+
+	zassert_ok(rb_peek(&v), "rb_pop should succeed");
+        zassert_equal(v, 7, "Result of rb_pop should be 7");
+
+	zassert_ok(rb_peek(&v), "rb_pop should succeed");
+        zassert_equal(v, 7, "Result of rb_pop should be 7");
+
 	ztest_test_skip();
+
 }
 
 ZTEST(ring_buf_boundaries, test_pop_null_returns_einval)
@@ -108,7 +174,11 @@ ZTEST(ring_buf_boundaries, test_pop_null_returns_einval)
 	/* TODO(l8-task1): rb_pop(NULL) -> -EINVAL.
 	 * See TEST_SPEC.md "Suite ring_buf_boundaries" #2.
 	 */
+
+        zassert_equal(rb_pop(NULL), -EINVAL, "Result of rb_pop should be -EINVAL");
+
 	ztest_test_skip();
+
 }
 
 ZTEST(ring_buf_boundaries, test_is_full_after_fill)
@@ -116,5 +186,16 @@ ZTEST(ring_buf_boundaries, test_is_full_after_fill)
 	/* TODO(l8-task1): push 4 values -> rb_is_full() == true, rb_count() == 4.
 	 * See TEST_SPEC.md "Suite ring_buf_boundaries" #3.
 	 */
+
+	zassert_ok(rb_push(1), "rb_push should succeed");
+	zassert_ok(rb_push(2), "rb_push should succeed");
+	zassert_ok(rb_push(3), "rb_push should succeed");
+	zassert_ok(rb_push(4), "rb_push should succeed");
+
+	zassert_true(rb_is_full(), "rb should be full");
+
+	zassert_equal(rb_count(), 4, "Buffer count must be 4");
+
 	ztest_test_skip();
+
 }
